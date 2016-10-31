@@ -1,6 +1,3 @@
-/**
- * Created by rao on 16-10-31.
- */
 import ApolloNLP.GetTransitionTable;
 import ApolloNLP.GetVocabularies;
 import com.google.common.base.Charsets;
@@ -11,7 +8,10 @@ import java.io.File;
 import java.util.Map;
 import java.util.Set;
 
-public class TestGetTransitionTable {
+/**
+ * Created by rao on 16-10-31.
+ */
+public class TestGetVocabularies {
     public static void main(String args[]){
         String fileName = "/home/rao/workspace/coding-examples/java/ApolloNLP/data/CoreNatureDictionary.ngram.txt";
         String dictString;
@@ -26,6 +26,6 @@ public class TestGetTransitionTable {
         }
         Map result = GetTransitionTable.getTransitionTable(dictString);
         Set<String> vocabulary = GetVocabularies.getVocabulary(result);
-        String a = "a";
+        String ccc = "a";
     }
 }
