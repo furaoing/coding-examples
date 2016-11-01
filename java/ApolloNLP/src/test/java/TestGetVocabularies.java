@@ -1,5 +1,5 @@
 import ApolloNLP.GetTransitionTable;
-import ApolloNLP.GetVocabularies;
+import ApolloNLP.GetVocabulary;
 import com.google.common.base.Charsets;
 import com.google.common.base.Stopwatch;
 import com.google.common.io.Files;
@@ -25,7 +25,7 @@ public class TestGetVocabularies {
             e.printStackTrace();
         }
         Map result = GetTransitionTable.getTransitionTable(dictString);
-        Set<String> vocabulary = GetVocabularies.getVocabulary(result);
+        Set<String> vocabulary = GetVocabulary.getVocabulary(result);
         String ccc = "a";
     }
 }

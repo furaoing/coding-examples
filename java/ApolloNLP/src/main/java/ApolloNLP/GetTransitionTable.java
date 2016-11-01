@@ -8,6 +8,8 @@ import java.util.Map;
  */
 
 public class GetTransitionTable {
+    public static Map<String, Float> transitionTable;
+
     public static Map<String, Float> getTransitionTable(String bigramDict){
         String[] bigramsDictRecord = bigramDict.split("\n");
         Map<String, Float> bigramTransitionTable = new HashMap<String, Float>();
