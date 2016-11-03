@@ -1,17 +1,17 @@
 package ApolloNLP;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
 import net.bigboo.apollo.adt.tree.generaltree.*;
 
 /**
  * Created by rao on 16-11-1.
  */
+
 public class GetAtomicSeg {
-    public static int searchDepth = 4;
-    public static Set<String[]> getAtomicSeg(String sen){
+    private static int searchDepth = 4;
+    public static Set<ArrayList<String>> getAtomicSeg(String sen) {
+        Set<ArrayList<String>> atomicSegs = new HashSet<ArrayList<String>>();
         List<Tree<PartitionPair>> trees = new LinkedList<Tree<PartitionPair>>();
         Set<PartitionPair> rootPartitionPairs = getPartitions(sen);
         for (PartitionPair partitionPair: rootPartitionPairs) {
@@ -20,29 +20,55 @@ public class GetAtomicSeg {
             trees.add(tree);
         }
         for (Tree<PartitionPair> tree: trees) {
-            Boolean isComplete = false;
-            while(!isComplete){
-
+            while(!isComplete(tree)) {
+                List<Node<PartitionPair>> leaves = tree.getLeaves();
+                for (Node<PartitionPair> leaf: leaves) {
+                    String res = leaf.getData().restText;
+                    Set<PartitionPair> newPairs = getPartitions(res);
+                    for (PartitionPair newPair: newPairs) {
+                        leaf.addChild(new Node<PartitionPair>(newPair));
+                    }
+                }
+            }
+            ArrayList<ArrayList<Node<PartitionPair>>> nodePaths = tree.getPathsFromRootToAnyLeaf();
+            for (ArrayList<Node<PartitionPair>> nodePath: nodePaths) {
+                ArrayList<String> segs = new ArrayList<String>();
+                for (Node<PartitionPair> node: nodePath) {
+                    segs.add(node.getData().token);
+                }
+                atomicSegs.add(segs);
             }
         }
+        return atomicSegs;
     }
 
-    static Set<PartitionPair> getPartitions(String sen){
+    private static boolean isComplete(Tree<PartitionPair> tree) {
+        List<Node<PartitionPair>> leaves = tree.getLeaves();
+        Boolean isComplete = true;
+        for (Node<PartitionPair> leaf: leaves) {
+            isComplete = isComplete && (leaf.getData().restText.equals(""));
+        }
+        return isComplete;
+    }
+
+    private static Set<PartitionPair> getPartitions(String sen){
         Set<PartitionPair> partitions = new HashSet<PartitionPair>();
         for(int tokenLen = 1; tokenLen < searchDepth + 1; tokenLen++){
-            PartitionPair partition = separate(tokenLen, sen);
-            if(partition!=null){
-                partitions.add(partition);
+            if (sen.length() >= tokenLen) {
+                PartitionPair partition = separate(tokenLen, sen);
+                if(partition!=null){
+                    partitions.add(partition);
+                }
             }
         }
         return partitions;
     }
 
-    static boolean inVocabulary(String token){
+    private static boolean inVocabulary(String token){
         return GetVocabulary.vocabulary.contains(token);
     }
 
-    static PartitionPair separate(int tokenLen, String text){
+    private static PartitionPair separate(int tokenLen, String text){
         String token = text.substring(0, tokenLen);
         if(inVocabulary(token)){
             return new PartitionPair(token, text.substring(tokenLen));
